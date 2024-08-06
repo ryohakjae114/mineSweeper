@@ -11,6 +11,7 @@ function createGrid() {
     const tr = document.createElement('tr');
     for (let j = 0; j < 9; j++) {
       const td = document.createElement('td');
+      td.classList.add('p-3');
       tr.appendChild(td);
     }
     displayGridTbody.appendChild(tr);
