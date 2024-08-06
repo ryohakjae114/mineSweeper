@@ -81,6 +81,7 @@ function clickCell(y, x) {
 
 
 function freeCell(y, x) {
+  console.log(y, x)
   const displayCell = document.querySelector(`[data-y="${y}"][data-x="${x}"]`);
   let neighborMinesCount = 0;
   for (let neighborY = y - 1; neighborY <= y + 1; neighborY++) {
@@ -93,18 +94,17 @@ function freeCell(y, x) {
       }
     }
   }
-  // debugger
   displayCell.innerText = neighborMinesCount;
-  // if (neighborMinesCount === 0) {
-  //   for (let neighborY = y - 1; neighborY <= y + 1; neighborY++) {
-  //     for (let neighborX = x - 1; neighborX <= x + 1; neighborX++) {
-  //       if (cell[neighborY] !== undefined && cell[neighborY][neighborX] !== undefined && cell[neighborY][neighborX]['free'] === false) {
-  //         freeCell(neighborY, neighborX);
-  //       }
-  //     }
-  //   }
-//   }
-//   return
+  if (neighborMinesCount === 0) {
+    for (let neighborY = y - 1; neighborY <= y + 1; neighborY++) {
+      for (let neighborX = x - 1; neighborX <= x + 1; neighborX++) {
+        if (cell[neighborY] !== undefined && cell[neighborY][neighborX] !== undefined && cell[neighborY][neighborX]['free'] === false && !(y===neighborY && x===neighborX)) {
+          freeCell(neighborY, neighborX);
+        }
+      }
+    }
+  }
+  return
 }
 
 function gameOver() {
