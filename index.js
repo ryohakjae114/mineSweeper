@@ -60,6 +60,7 @@ function getRandomInt(max) {
 function freeCell(y, x) {
   if (cell[y][x]) {
     // 地雷だった時の処理
+    gameOver();
   } else {
     // クリックされて地雷じゃなくて、隣接する地雷の数を表示する
     const displayCell = document.querySelector(`[data-y="${y}"][data-x="${x}"]`);
@@ -77,4 +78,14 @@ function freeCell(y, x) {
     displayCell.innerText = neighborMinesCount;
   }
   return;
+}
+
+function gameOver() {
+  alert('爆発しました');
+  // ゲーム終了後、ボタンを押してもイベントが発火しないようにする
+  document.querySelectorAll('td').forEach((td) => {
+    td.removeEventListener('click', () => {
+      freeCell(Number(td.dataset.y), Number(td.dataset.x));
+    });
+  });
 }
