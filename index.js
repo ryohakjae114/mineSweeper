@@ -8,7 +8,7 @@ addEventListener("load", () => {
   placeMines(20);
   document.querySelectorAll('td').forEach((td) => {
     td.addEventListener('click', () => {
-      freeCell(Number(td.dataset.y), Number(td.dataset.x));
+      clickCell(Number(td.dataset.y), Number(td.dataset.x));
     });
   });
 });
@@ -61,10 +61,7 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-function freeCell(y, x) {
-  freeCellCount++;
-  cell[y][x]['free'] = true;
-
+function clickCell(y, x) {
   if (cell[y][x]['mine']) {
     if (freeCellCount === 1) {
       cell[y][x]['mine'] = false;
@@ -76,21 +73,38 @@ function freeCell(y, x) {
     }
   } else {
     // クリックされて地雷じゃなくて、隣接する地雷の数を表示する
-    const displayCell = document.querySelector(`[data-y="${y}"][data-x="${x}"]`);
-    let neighborMinesCount = 0;
-    for (let neighborY = y - 1; neighborY <= y + 1; neighborY++) {
-      let count = 0;
-      for (let neighborX = x - 1; neighborX <= x + 1; neighborX++) {
-        if (cell[neighborY] !== undefined && cell[neighborY][neighborX] !== undefined && cell[neighborY][neighborX]['mine'] === true) {
-          neighborMinesCount++;
-        }
-        count++;
-        console.log(count)
-      }
-    }
-    displayCell.innerText = neighborMinesCount;
+    freeCell(y, x);
   }
   return;
+}
+
+
+
+function freeCell(y, x) {
+  const displayCell = document.querySelector(`[data-y="${y}"][data-x="${x}"]`);
+  let neighborMinesCount = 0;
+  for (let neighborY = y - 1; neighborY <= y + 1; neighborY++) {
+    for (let neighborX = x - 1; neighborX <= x + 1; neighborX++) {
+      console.log(neighborY, neighborX);
+      if (cell[neighborY] !== undefined && cell[neighborY][neighborX] !== undefined && cell[neighborY][neighborX]['mine'] === true) {
+        freeCellCount++;
+        cell[y][x]['free'] = true;
+        neighborMinesCount++;
+      }
+    }
+  }
+  // debugger
+  displayCell.innerText = neighborMinesCount;
+  // if (neighborMinesCount === 0) {
+  //   for (let neighborY = y - 1; neighborY <= y + 1; neighborY++) {
+  //     for (let neighborX = x - 1; neighborX <= x + 1; neighborX++) {
+  //       if (cell[neighborY] !== undefined && cell[neighborY][neighborX] !== undefined && cell[neighborY][neighborX]['free'] === false) {
+  //         freeCell(neighborY, neighborX);
+  //       }
+  //     }
+  //   }
+//   }
+//   return
 }
 
 function gameOver() {
@@ -98,7 +112,7 @@ function gameOver() {
   // ゲーム終了後、ボタンを押してもイベントが発火しないようにする
   document.querySelectorAll('td').forEach((td) => {
     td.removeEventListener('click', () => {
-      freeCell(Number(td.dataset.y), Number(td.dataset.x));
+      clickCell(Number(td.dataset.y), Number(td.dataset.x));
     });
   });
 }
