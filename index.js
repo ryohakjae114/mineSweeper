@@ -47,6 +47,7 @@ function placeMines(count) {
     }
     cell[placeMine[0]][placeMine[1]]['mine'] = true;
     const displayCell = document.querySelector(`[data-y="${placeMine[0]}"][data-x="${placeMine[1]}"]`);
+    displayCell.classList.add('bg-secondary');
     displayCell.innerText = '地雷';
   }
 }
@@ -81,30 +82,33 @@ function clickCell(y, x) {
 
 
 function freeCell(y, x) {
-  console.log(y, x)
   const displayCell = document.querySelector(`[data-y="${y}"][data-x="${x}"]`);
-  let neighborMinesCount = 0;
-  for (let neighborY = y - 1; neighborY <= y + 1; neighborY++) {
-    for (let neighborX = x - 1; neighborX <= x + 1; neighborX++) {
-      console.log(neighborY, neighborX);
-      if (cell[neighborY] !== undefined && cell[neighborY][neighborX] !== undefined && cell[neighborY][neighborX]['mine'] === true) {
-        freeCellCount++;
-        cell[y][x]['free'] = true;
-        neighborMinesCount++;
-      }
-    }
-  }
-  displayCell.innerText = neighborMinesCount;
-  if (neighborMinesCount === 0) {
-    for (let neighborY = y - 1; neighborY <= y + 1; neighborY++) {
-      for (let neighborX = x - 1; neighborX <= x + 1; neighborX++) {
-        if (cell[neighborY] !== undefined && cell[neighborY][neighborX] !== undefined && cell[neighborY][neighborX]['free'] === false && !(y===neighborY && x===neighborX)) {
+  if (displayCell !== null && cell[y][x]['free'] === false) {
+    const countMinesAround = countMinesAroundCalc(y, x);
+    displayCell.innerText = countMinesAround;
+    cell[y][x]['free'] = true;
+    if (countMinesAround === 0) {
+      for (let neighborY = y - 1; neighborY <= y + 1; neighborY++) {
+        for (let neighborX = x - 1; neighborX <= x + 1; neighborX++) {
           freeCell(neighborY, neighborX);
         }
       }
     }
+  } else {
+    return;
   }
-  return
+}
+
+function countMinesAroundCalc(y, x) {
+  let neighborMinesCount = 0;
+  for (let neighborY = y - 1; neighborY <= y + 1; neighborY++) {
+    for (let neighborX = x - 1; neighborX <= x + 1; neighborX++) {
+      if (cell[neighborY] !== undefined && cell[neighborY][neighborX] !== undefined && cell[neighborY][neighborX]['mine'] === true) {
+        neighborMinesCount++;
+      }
+    }
+  }
+  return neighborMinesCount;
 }
 
 function gameOver() {
