@@ -4,18 +4,19 @@ let freeCellCount;
 let setFlagCount = 0;
 
 const displayFlagCount = document.getElementById('flagCount');
+const displayResetButton = document.getElementById('resetButton');
+const displayGridTbody = document.getElementById('gridTbody');
 
 addEventListener("load", () => {
   initGame();
 });
 
-const resetButton = document.getElementById('resetButton');
-resetButton.addEventListener('click', () => {
+displayResetButton.addEventListener('click', () => {
   resetGame();
 })
 
 function initGame() {
-  resetButton.innerText = '😊';
+  displayResetButton.innerText = '😊';
   cell = [[], [], [], [], [], [], [], [], []];
   freeCellCount = 0;
   setFlagCount = 0;
@@ -26,15 +27,13 @@ function initGame() {
 }
 
 function resetGame() {
-  const tbody = document.getElementById('gridTbody');
-  while (tbody.firstChild) {
-    tbody.removeChild(tbody.firstChild);
+  while (displayGridTbody.firstChild) {
+    displayGridTbody.removeChild(displayGridTbody.firstChild);
   }
   initGame();
 }
 
 function createGrid() {
-  const displayGridTbody = document.getElementById('gridTbody');
   for (let y = 0; y < 9; y++) {
     const tr = document.createElement('tr');
     for (let x = 0; x < 9; x++) {
@@ -69,15 +68,15 @@ function initCells() {
 
 function placeMines(count) {
   for (let i = 0; i < count; i++) {
-    let placeMine = decidePlace();
+    let placeMine = randomPosition();
     while (cell[placeMine[0]][placeMine[1]]['mine']) {
-      placeMine = decidePlace();
+      placeMine = randomPosition();
     }
     cell[placeMine[0]][placeMine[1]]['mine'] = true;
   }
 }
 
-function decidePlace() {
+function randomPosition() {
   const y = getRandomInt(9);
   const x = getRandomInt(9);
   return [y, x];
@@ -91,7 +90,7 @@ function clickCell(y, x) {
   if (cell[y][x]['mine']) {
     if (freeCellCount === 0) {
       cell[y][x]['mine'] = false;
-      document.querySelector(`[data-y="${y}"][data-x="${x}"]`).classList.add('freeCell');
+      searchDisplayCell(y, x).classList.add('freeCell');
       placeMines(1);
       freeCell(y, x);
     } else {
@@ -100,11 +99,10 @@ function clickCell(y, x) {
   } else {
     freeCell(y, x);
   }
-  return;
 }
 
 function toggleFlag(y, x) {
-  const displayCell = document.querySelector(`[data-y="${y}"][data-x="${x}"]`);
+  const displayCell = searchDisplayCell(y, x);
   if (cell[y][x]['free'] === false) {
     if (displayCell.innerText === '🚩') {
       displayCell.innerText = ''
@@ -120,26 +118,18 @@ function toggleFlag(y, x) {
 
 
 function freeCell(y, x) {
-  const displayCell = document.querySelector(`[data-y="${y}"][data-x="${x}"]`);
+  const displayCell = searchDisplayCell(y, x);
   if (displayCell !== null && cell[y][x]['free'] === false) {
-    const countMinesAround = countMinesAroundCalc(y, x);
+    const countMinesAround = calcCountMinesAround(y, x);
     if (displayCell.innerText === '🚩') {
       toggleFlag(y, x);
-    } else {
-      displayCell.innerText = countMinesAround;
     }
+    displayCell.innerText = countMinesAround;
     displayCell.classList.add('freeCell');
     cell[y][x]['free'] = true;
     freeCellCount++;
-      console.log(freeCellCount);
     if (freeCellCount === 71) {
       alert('成功!');
-      // ゲーム終了後、ボタンを押してもイベントが発火しないようにする
-      document.querySelectorAll('td').forEach((td) => {
-        td.removeEventListener('click', () => {
-          clickCell(Number(td.dataset.y), Number(td.dataset.x));
-        });
-      });
     }
     if (countMinesAround === 0) {
       for (let neighborY = y - 1; neighborY <= y + 1; neighborY++) {
@@ -153,7 +143,7 @@ function freeCell(y, x) {
   }
 }
 
-function countMinesAroundCalc(y, x) {
+function calcCountMinesAround(y, x) {
   let neighborMinesCount = 0;
   for (let neighborY = y - 1; neighborY <= y + 1; neighborY++) {
     for (let neighborX = x - 1; neighborX <= x + 1; neighborX++) {
@@ -166,21 +156,18 @@ function countMinesAroundCalc(y, x) {
 }
 
 function gameOver() {
-  resetButton.innerText = '😅';
+  displayResetButton.innerText = '😅';
   for (let y = 0; y < 9; y++) {
     for (let x = 0; x < 9; x++) {
       if (cell[y][x]['mine'] === true) {
-        const displayCell = document.querySelector(`[data-y="${y}"][data-x="${x}"]`);
+        const displayCell = searchDisplayCell(y, x);
         displayCell.innerText = '💣';
       }
     }
   }
   alert('爆発しました');
-  
-  // ゲーム終了後、ボタンを押してもイベントが発火しないようにする
-  document.querySelectorAll('td').forEach((td) => {
-    td.removeEventListener('click', () => {
-      clickCell(Number(td.dataset.y), Number(td.dataset.x));
-    });
-  });
+}
+
+function searchDisplayCell(y, x) {
+  return document.querySelector(`[data-y="${y}"][data-x="${x}"]`);
 }
