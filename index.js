@@ -10,6 +10,10 @@ addEventListener("load", () => {
     td.addEventListener('click', () => {
       clickCell(Number(td.dataset.y), Number(td.dataset.x));
     });
+    td.addEventListener('contextmenu', (e) => {
+      setFlag(Number(td.dataset.y), Number(td.dataset.x));
+      e.preventDefault();
+    })
   });
 });
 
@@ -78,6 +82,11 @@ function clickCell(y, x) {
     freeCell(y, x);
   }
   return;
+}
+
+function setFlag(y, x) {
+  const displayCell = document.querySelector(`[data-y="${y}"][data-x="${x}"]`);
+  displayCell.innerText = '🚩';
 }
 
 
