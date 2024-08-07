@@ -1,6 +1,6 @@
 'use strict';
-let cell = [[], [], [], [], [], [], [], [], []];
-let freeCellCount = 0;
+let cell;
+let freeCellCount;
 let setFlagCount = 0;
 
 addEventListener("load", () => {
@@ -14,25 +14,16 @@ resetButton.addEventListener('click', () => {
 
 function initGame() {
   resetButton.innerText = '😊';
+  cell = [[], [], [], [], [], [], [], [], []];
+  freeCellCount = 0;
   setFlagCount = 0;
-  createGrid();
   document.getElementById('flagCount').innerText = setFlagCount;
+  createGrid();
   initCells();
   placeMines(10);
-  document.querySelectorAll('td').forEach((td) => {
-    td.addEventListener('click', () => {
-      clickCell(Number(td.dataset.y), Number(td.dataset.x));
-    });
-    td.addEventListener('contextmenu', (e) => {
-      toggleFlag(Number(td.dataset.y), Number(td.dataset.x));
-      e.preventDefault();
-    })
-  });
 }
 
 function resetGame() {
-  cell = [[], [], [], [], [], [], [], [], []];
-  freeCellCount = 0;
   const tbody = document.getElementById('gridTbody');
   while (tbody.firstChild) {
     tbody.removeChild(tbody.firstChild);
@@ -51,6 +42,13 @@ function createGrid() {
       td.classList.add('cell', 'notFreeCell', 'fs-6');
       td.setAttribute('align', 'center');
       td.setAttribute('valign', 'middle');
+      td.addEventListener('click', () => {
+        clickCell(Number(td.dataset.y), Number(td.dataset.x));
+      });
+      td.addEventListener('contextmenu', (e) => {
+        toggleFlag(Number(td.dataset.y), Number(td.dataset.x));
+        e.preventDefault();
+      })
       tr.appendChild(td);
     }
     displayGridTbody.appendChild(tr);
