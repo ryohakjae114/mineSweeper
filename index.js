@@ -86,10 +86,12 @@ function clickCell(y, x) {
 
 function toggleFlag(y, x) {
   const displayCell = document.querySelector(`[data-y="${y}"][data-x="${x}"]`);
-  if (displayCell.innerText === '🚩') {
-    displayCell.innerText = 'セーフ'
-  } else {
-    displayCell.innerText = '🚩';
+  if (cell[y][x]['free'] === false) {
+    if (displayCell.innerText === '🚩') {
+      displayCell.innerText = 'セーフ'
+    } else {
+      displayCell.innerText = '🚩';
+    }
   }
 }
 
