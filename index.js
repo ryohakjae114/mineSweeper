@@ -1,4 +1,5 @@
 'use strict';
+
 let cell;
 let freeCellCount;
 let setFlagCount = 0;
