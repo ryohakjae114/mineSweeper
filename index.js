@@ -3,6 +3,8 @@ let cell;
 let freeCellCount;
 let setFlagCount = 0;
 
+const displayFlagCount = document.getElementById('flagCount');
+
 addEventListener("load", () => {
   initGame();
 });
@@ -17,7 +19,7 @@ function initGame() {
   cell = [[], [], [], [], [], [], [], [], []];
   freeCellCount = 0;
   setFlagCount = 0;
-  document.getElementById('flagCount').innerText = setFlagCount;
+  displayFlagCount.innerText = setFlagCount;
   createGrid();
   initCells();
   placeMines(10);
@@ -111,7 +113,7 @@ function toggleFlag(y, x) {
       displayCell.innerText = '🚩';
       setFlagCount++;
     }
-    document.getElementById('flagCount').innerText = setFlagCount;
+    displayFlagCount.innerText = setFlagCount;
   }
 }
 
