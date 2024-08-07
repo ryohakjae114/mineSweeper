@@ -1,8 +1,17 @@
 'use strict';
-const cell = [[], [], [], [], [], [], [], [], []];
+let cell = [[], [], [], [], [], [], [], [], []];
 let freeCellCount = 0;
 
 addEventListener("load", () => {
+  initGame();
+});
+
+const resetButton = document.getElementById('resetButton');
+resetButton.addEventListener('click', () => {
+  resetGame();
+})
+
+function initGame() {
   createGrid();
   initCells();
   placeMines(10);
@@ -15,7 +24,17 @@ addEventListener("load", () => {
       e.preventDefault();
     })
   });
-});
+}
+
+function resetGame() {
+  cell = [[], [], [], [], [], [], [], [], []];
+  freeCellCount = 0;
+  const tbody = document.getElementById('gridTbody');
+  while (tbody.firstChild) {
+    tbody.removeChild(tbody.firstChild);
+  }
+  initGame();
+}
 
 function createGrid() {
   const displayGridTbody = document.getElementById('gridTbody');
