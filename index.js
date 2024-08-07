@@ -5,7 +5,7 @@ let freeCellCount = 0;
 addEventListener("load", () => {
   createGrid();
   initCells();
-  placeMines(20);
+  placeMines(10);
   document.querySelectorAll('td').forEach((td) => {
     td.addEventListener('click', () => {
       clickCell(Number(td.dataset.y), Number(td.dataset.x));
@@ -106,6 +106,15 @@ function freeCell(y, x) {
     cell[y][x]['free'] = true;
     freeCellCount++;
     console.log(freeCellCount);
+    if (freeCellCount === 71) {
+      alert('成功!');
+      // ゲーム終了後、ボタンを押してもイベントが発火しないようにする
+      document.querySelectorAll('td').forEach((td) => {
+        td.removeEventListener('click', () => {
+          clickCell(Number(td.dataset.y), Number(td.dataset.x));
+        });
+      });
+    }
     if (countMinesAround === 0) {
       for (let neighborY = y - 1; neighborY <= y + 1; neighborY++) {
         for (let neighborX = x - 1; neighborX <= x + 1; neighborX++) {
