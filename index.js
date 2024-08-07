@@ -1,6 +1,7 @@
 'use strict';
 let cell = [[], [], [], [], [], [], [], [], []];
 let freeCellCount = 0;
+let setFlagCount = 0;
 
 addEventListener("load", () => {
   initGame();
@@ -12,7 +13,10 @@ resetButton.addEventListener('click', () => {
 })
 
 function initGame() {
+  resetButton.innerText = '😊';
+  setFlagCount = 0;
   createGrid();
+  document.getElementById('flagCount').innerText = setFlagCount;
   initCells();
   placeMines(10);
   document.querySelectorAll('td').forEach((td) => {
@@ -44,8 +48,9 @@ function createGrid() {
       const td = document.createElement('td');
       td.dataset.y = y;
       td.dataset.x = x;
-      td.innerText = 'セーフ'; // デバッグ用
-      td.classList.add('p-3', 'notFreeCell');
+      td.classList.add('cell', 'notFreeCell', 'fs-6');
+      td.setAttribute('align', 'center');
+      td.setAttribute('valign', 'middle');
       tr.appendChild(td);
     }
     displayGridTbody.appendChild(tr);
@@ -69,8 +74,6 @@ function placeMines(count) {
       placeMine = decidePlace();
     }
     cell[placeMine[0]][placeMine[1]]['mine'] = true;
-    const displayCell = document.querySelector(`[data-y="${placeMine[0]}"][data-x="${placeMine[1]}"]`);
-    displayCell.innerText = '地雷';
   }
 }
 
@@ -88,16 +91,13 @@ function clickCell(y, x) {
   if (cell[y][x]['mine']) {
     if (freeCellCount === 0) {
       cell[y][x]['mine'] = false;
-      document.querySelector(`[data-y="${y}"][data-x="${x}"]`).innerText = 'セーフ';
       document.querySelector(`[data-y="${y}"][data-x="${x}"]`).classList.add('freeCell');
       placeMines(1);
       freeCell(y, x);
     } else {
-      // 地雷だった時の処理 
       gameOver();
     }
   } else {
-    // クリックされて地雷じゃなくて、隣接する地雷の数を表示する
     freeCell(y, x);
   }
   return;
@@ -107,10 +107,13 @@ function toggleFlag(y, x) {
   const displayCell = document.querySelector(`[data-y="${y}"][data-x="${x}"]`);
   if (cell[y][x]['free'] === false) {
     if (displayCell.innerText === '🚩') {
-      displayCell.innerText = 'セーフ'
+      displayCell.innerText = ''
+      setFlagCount--;
     } else {
       displayCell.innerText = '🚩';
+      setFlagCount++;
     }
+    document.getElementById('flagCount').innerText = setFlagCount;
   }
 }
 
@@ -120,11 +123,15 @@ function freeCell(y, x) {
   const displayCell = document.querySelector(`[data-y="${y}"][data-x="${x}"]`);
   if (displayCell !== null && cell[y][x]['free'] === false) {
     const countMinesAround = countMinesAroundCalc(y, x);
-    displayCell.innerText = countMinesAround;
+    if (displayCell.innerText === '🚩') {
+      toggleFlag(y, x);
+    } else {
+      displayCell.innerText = countMinesAround;
+    }
     displayCell.classList.add('freeCell');
     cell[y][x]['free'] = true;
     freeCellCount++;
-    console.log(freeCellCount);
+      console.log(freeCellCount);
     if (freeCellCount === 71) {
       alert('成功!');
       // ゲーム終了後、ボタンを押してもイベントが発火しないようにする
@@ -159,7 +166,17 @@ function countMinesAroundCalc(y, x) {
 }
 
 function gameOver() {
+  resetButton.innerText = '😅';
+  for (let y = 0; y < 9; y++) {
+    for (let x = 0; x < 9; x++) {
+      if (cell[y][x]['mine'] === true) {
+        const displayCell = document.querySelector(`[data-y="${y}"][data-x="${x}"]`);
+        displayCell.innerText = '💣';
+      }
+    }
+  }
   alert('爆発しました');
+  
   // ゲーム終了後、ボタンを押してもイベントが発火しないようにする
   document.querySelectorAll('td').forEach((td) => {
     td.removeEventListener('click', () => {
