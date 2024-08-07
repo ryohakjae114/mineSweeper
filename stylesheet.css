@@ -1,0 +1,8 @@
+.table > tbody > tr > .notFreeCell {
+  background-color: #ced4da;
+  color: blue;
+}
+
+.table > tbody > tr > .freeCell {
+  background-color: #343a40;
+}

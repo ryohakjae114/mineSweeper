@@ -22,7 +22,7 @@ function createGrid() {
       td.dataset.y = y;
       td.dataset.x = x;
       td.innerText = 'セーフ'; // デバッグ用
-      td.classList.add('p-3');
+      td.classList.add('p-3', 'notFreeCell');
       tr.appendChild(td);
     }
     displayGridTbody.appendChild(tr);
@@ -47,7 +47,6 @@ function placeMines(count) {
     }
     cell[placeMine[0]][placeMine[1]]['mine'] = true;
     const displayCell = document.querySelector(`[data-y="${placeMine[0]}"][data-x="${placeMine[1]}"]`);
-    displayCell.classList.add('bg-secondary');
     displayCell.innerText = '地雷';
   }
 }
@@ -64,10 +63,12 @@ function getRandomInt(max) {
 
 function clickCell(y, x) {
   if (cell[y][x]['mine']) {
-    if (freeCellCount === 1) {
+    if (freeCellCount === 0) {
       cell[y][x]['mine'] = false;
       document.querySelector(`[data-y="${y}"][data-x="${x}"]`).innerText = 'セーフ';
+      document.querySelector(`[data-y="${y}"][data-x="${x}"]`).classList.add('freeCell');
       placeMines(1);
+      freeCell(y, x);
     } else {
       // 地雷だった時の処理 
       gameOver();
@@ -86,7 +87,9 @@ function freeCell(y, x) {
   if (displayCell !== null && cell[y][x]['free'] === false) {
     const countMinesAround = countMinesAroundCalc(y, x);
     displayCell.innerText = countMinesAround;
+    displayCell.classList.add('freeCell');
     cell[y][x]['free'] = true;
+    freeCellCount++;
     if (countMinesAround === 0) {
       for (let neighborY = y - 1; neighborY <= y + 1; neighborY++) {
         for (let neighborX = x - 1; neighborX <= x + 1; neighborX++) {
