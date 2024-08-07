@@ -117,7 +117,6 @@ function toggleFlag(y, x) {
 }
 
 
-
 function freeCell(y, x) {
   const displayCell = searchDisplayCell(y, x);
   if (displayCell !== null && cell[y][x]['free'] === false) {
