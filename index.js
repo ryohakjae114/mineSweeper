@@ -8,7 +8,7 @@ const displayFlagCount = document.getElementById('flagCount');
 const displayResetButton = document.getElementById('resetButton');
 const displayGridTbody = document.getElementById('gridTbody');
 
-addEventListener("load", () => {
+addEventListener('load', () => {
   initGame();
 });
 
