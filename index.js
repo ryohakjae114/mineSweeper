@@ -11,7 +11,7 @@ addEventListener("load", () => {
       clickCell(Number(td.dataset.y), Number(td.dataset.x));
     });
     td.addEventListener('contextmenu', (e) => {
-      setFlag(Number(td.dataset.y), Number(td.dataset.x));
+      toggleFlag(Number(td.dataset.y), Number(td.dataset.x));
       e.preventDefault();
     })
   });
@@ -84,9 +84,13 @@ function clickCell(y, x) {
   return;
 }
 
-function setFlag(y, x) {
+function toggleFlag(y, x) {
   const displayCell = document.querySelector(`[data-y="${y}"][data-x="${x}"]`);
-  displayCell.innerText = '🚩';
+  if (displayCell.innerText === '🚩') {
+    displayCell.innerText = 'セーフ'
+  } else {
+    displayCell.innerText = '🚩';
+  }
 }
 
 
@@ -99,6 +103,7 @@ function freeCell(y, x) {
     displayCell.classList.add('freeCell');
     cell[y][x]['free'] = true;
     freeCellCount++;
+    console.log(freeCellCount);
     if (countMinesAround === 0) {
       for (let neighborY = y - 1; neighborY <= y + 1; neighborY++) {
         for (let neighborX = x - 1; neighborX <= x + 1; neighborX++) {
